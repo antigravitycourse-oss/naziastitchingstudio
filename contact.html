@@ -82,26 +82,32 @@
       <div class="grid-2 contact-card reveal reveal-up">
         
         <!-- Contact Form -->
-        <div>
+        <div id="formWrapper" style="display: flex; flex-direction: column; justify-content: center;">
           <h2 class="mb-6">Send a Message</h2>
-          <form>
+          <form id="contactForm">
             <div class="grid-2 mb-4">
               <div class="form-group mb-0">
-                <label class="form-label">First Name</label>
+                <label class="form-label">First Name <span style="color:red">*</span></label>
                 <input type="text" class="form-control" required>
               </div>
               <div class="form-group mb-0">
-                <label class="form-label">Last Name</label>
+                <label class="form-label">Last Name <span style="color:red">*</span></label>
                 <input type="text" class="form-control" required>
               </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Email Address</label>
-              <input type="email" class="form-control" required>
+            <div class="grid-2 mb-4">
+              <div class="form-group mb-0">
+                <label class="form-label">Phone Number <span style="color:red">*</span></label>
+                <input type="tel" class="form-control" required>
+              </div>
+              <div class="form-group mb-0">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control">
+              </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Subject</label>
-              <select class="form-control" id="contact-subject">
+              <label class="form-label">Subject <span style="color:red">*</span></label>
+              <select class="form-control" id="contact-subject" required>
                 <option value="Custom Stitching Inquiry">Custom Stitching Inquiry</option>
                 <option value="Embroidery Details">Embroidery Details</option>
                 <option value="Bridal Consultation">Bridal Consultation</option>
@@ -110,7 +116,7 @@
             </div>
             <div class="form-group mb-6">
               <label class="form-label">Message</label>
-              <textarea class="form-control" rows="5" required></textarea>
+              <textarea class="form-control" rows="5"></textarea>
             </div>
             <button type="submit" class="btn btn-primary" style="width:100%;">Send Message</button>
           </form>
@@ -187,6 +193,66 @@
           else if (subject === 'embroidery') select.value = 'Embroidery Details';
           else if (subject === 'consulting') select.value = 'Bridal Consultation';
         }
+      }
+
+      // Contact Form Handler
+      const form = document.getElementById('contactForm');
+      const wrapper = document.getElementById('formWrapper');
+      
+      if(form && wrapper) {
+        // Save the original form HTML so we can restore it later
+        const originalFormHTML = wrapper.innerHTML;
+
+        // Use event delegation on the wrapper so we can catch form submits AND back button clicks
+        wrapper.addEventListener('submit', (e) => {
+          if (e.target && e.target.id === 'contactForm') {
+            e.preventDefault(); // Stop full page refresh
+            
+            wrapper.style.transition = 'opacity 0.4s ease';
+            wrapper.style.opacity = '0';
+            
+            setTimeout(() => {
+              wrapper.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; color: var(--c-primary); animation: fadeUp 0.6s ease forwards; position: relative;">
+                  
+                  <button id="returnToFormBtn" style="position: absolute; top: -20px; left: 0; background: none; border: none; cursor: pointer; color: var(--c-text-muted); display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); font-weight: var(--fw-medium); transition: color 0.3s ease;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Return
+                  </button>
+
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--c-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1.5rem; margin-top: 2rem;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <h2 style="margin-bottom: 0.5rem; font-family: var(--ff-heading);">Thank You!</h2>
+                  <p style="color: var(--c-text-sub); font-size: var(--fs-lg);">Your message has been received. We will be in touch shortly.</p>
+                </div>
+              `;
+              wrapper.style.opacity = '1';
+            }, 400);
+          }
+        });
+
+        // Event listener for the "Return" button
+        wrapper.addEventListener('click', (e) => {
+          const returnBtn = e.target.closest('#returnToFormBtn');
+          if (returnBtn) {
+            wrapper.style.opacity = '0';
+            setTimeout(() => {
+              wrapper.innerHTML = originalFormHTML;
+              wrapper.style.opacity = '1';
+              
+              // Re-populate subject if it was in the URL
+              const params = new URLSearchParams(window.location.search);
+              const subject = params.get('subject');
+              if (subject) {
+                const select = document.getElementById('contact-subject');
+                if (select) {
+                  if (subject === 'stitching') select.value = 'Custom Stitching Inquiry';
+                  else if (subject === 'embroidery') select.value = 'Embroidery Details';
+                  else if (subject === 'consulting') select.value = 'Bridal Consultation';
+                }
+              }
+            }, 400);
+          }
+        });
       }
     });
   </script>
