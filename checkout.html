@@ -49,6 +49,9 @@
       color: var(--c-text-sub); transition: all var(--dur-fast) var(--ease);
     }
     .pm-btn.active { border-color: var(--c-primary); background: var(--c-primary-pale); color: var(--c-primary); box-shadow: 0 0 0 2px var(--c-primary-pale); }
+    @media (max-width: 640px) {
+      .payment-methods { grid-template-columns: 1fr; }
+    }
     
     .summary-card {
       background: var(--c-white); border-radius: var(--r-xl);
