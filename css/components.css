@@ -113,6 +113,10 @@
   color: var(--c-white);
   position: relative;
 }
+.page-header .section-subtitle {
+  margin-left: auto;
+  margin-right: auto;
+}
 .page-header::before {
   content: '';
   position: absolute;
@@ -204,7 +208,7 @@
   transition: all 0.3s ease;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   .nav-links {
     position: fixed;
     top: 0; right: -100%;

@@ -117,7 +117,7 @@ main { padding-top: var(--nav-h); }
 .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--sp-8); }
 .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--sp-6); }
 
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   .grid-4 { grid-template-columns: repeat(2,1fr); }
   .grid-3 { grid-template-columns: repeat(2,1fr); }
   .grid-2 { grid-template-columns: 1fr; }
@@ -125,8 +125,8 @@ main { padding-top: var(--nav-h); }
 @media (max-width: 640px) {
   .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }
-@media (max-width: 1024px) { .hide-mobile { display: none !important; } }
-@media (min-width: 1025px) { .hide-desktop { display: none !important; } }
+@media (max-width: 960px) { .hide-mobile { display: none !important; } }
+@media (min-width: 961px) { .hide-desktop { display: none !important; } }
 
 /* ============================================================
    PRELOADER
