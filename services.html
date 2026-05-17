@@ -54,7 +54,7 @@
       display: block;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       .service-hero-gallery {
         grid-template-columns: 1fr;
         height: auto;
@@ -63,6 +63,21 @@
       .service-hero-gallery .gallery-item {
         aspect-ratio: 4 / 3;
         height: auto;
+      }
+    }
+
+    .service-details-col {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .service-details-col .btn {
+      margin-top: auto;
+      align-self: flex-start;
+    }
+    @media (max-width: 1024px) {
+      .service-details-col .btn {
+        margin-top: 1.5rem;
       }
     }
 
@@ -130,7 +145,7 @@
             </div>
           </div>
           <div class="grid-2">
-            <div>
+            <div class="service-details-col">
               <h2 class="mb-4">Precision Tailoring</h2>
               <p class="mb-4">Our master tailors bring decades of experience to every garment. We specialize in traditional Pakistani wear, combining classic techniques with modern silhouettes.</p>
               <ul class="mb-6" style="list-style: disc; padding-left: 1.5rem; color: var(--c-text-sub);">
@@ -166,7 +181,7 @@
             </div>
           </div>
           <div class="grid-2">
-            <div>
+            <div class="service-details-col">
               <h2 class="mb-4">Exquisite Hand Embroidery</h2>
               <p class="mb-4">From delicate threadwork to heavy zardozi, our artisans create breathtaking embellishments that transform fabric into art.</p>
               <ul class="mb-6" style="list-style: disc; padding-left: 1.5rem; color: var(--c-text-sub);">
@@ -201,8 +216,8 @@
             </div>
           </div>
           <div class="grid-2">
-            <div>
-              <h2 class="mb-4">Personalized Styling</h2>
+            <div class="service-details-col">
+              <h2 class="mb-4">Expert Design Consulting</h2>
               <p class="mb-4">Not sure what style suits you best? Our senior designers offer comprehensive consulting to curate your perfect wardrobe.</p>
               <ul class="mb-6" style="list-style: disc; padding-left: 1.5rem; color: var(--c-text-sub);">
                 <li class="mb-2">Fabric Sourcing & Selection</li>

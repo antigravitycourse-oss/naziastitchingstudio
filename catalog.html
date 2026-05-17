@@ -468,10 +468,6 @@
     document.getElementById('modalBuyNowBtn').addEventListener('click', () => {
       if(!currentModalItem) return;
       const size = document.getElementById('modalSizeSelect').value;
-      if (typeof Auth !== 'undefined' && !Auth.currentUser) {
-        Auth.openModal();
-        return;
-      }
       Cart.clearCart();
       Cart.addItem({ ...currentModalItem, size });
       window.location.href = 'checkout.html';
@@ -481,6 +477,44 @@
     function quickAdd(title, price, category, imgUrl) {
       Cart.addItem({ title, price, category, image: imgUrl, size: 'Standard' });
     }
+
+    // Direct Buy function for clicking titles
+    function buyItemNow(title, price, category, imgUrl) {
+      Cart.clearCart();
+      Cart.addItem({ title, price, category, image: imgUrl, size: 'Standard' });
+      window.location.href = 'checkout.html';
+    }
+
+    // Make all product titles clickable
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.catalog-item').forEach(card => {
+        const titleEl = card.querySelector('.card-title');
+        if(titleEl) {
+          titleEl.style.cursor = 'pointer';
+          titleEl.title = "Buy " + titleEl.textContent + " Now";
+          
+          // Add subtle hover effect directly
+          titleEl.addEventListener('mouseenter', () => titleEl.style.color = 'var(--c-gold)');
+          titleEl.addEventListener('mouseleave', () => titleEl.style.color = '');
+          
+          titleEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            const quickViewBtn = card.querySelector('.quick-view-btn');
+            if (quickViewBtn) {
+              const onclickStr = quickViewBtn.getAttribute('onclick');
+              const paramsMatch = onclickStr.match(/openModal\('([^']*)',\s*'([^']*)',\s*'([^']*)',\s*'([^']*)',\s*'([^']*)'\)/);
+              if(paramsMatch) {
+                const title = paramsMatch[1];
+                const price = paramsMatch[2];
+                const category = paramsMatch[4];
+                const imgUrl = paramsMatch[5];
+                buyItemNow(title, price, category, imgUrl);
+              }
+            }
+          });
+        }
+      });
+    });
   </script>
 </body>
 </html>

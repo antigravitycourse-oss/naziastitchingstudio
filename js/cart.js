@@ -154,11 +154,6 @@ const Cart = {
     }
   },
   addItem(item) {
-    if (typeof Auth !== 'undefined' && !Auth.currentUser) {
-      Auth.openModal();
-      return false;
-    }
-    
     const cart = this.getCart();
     
     // Add mock details for luxury breakdown
