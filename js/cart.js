@@ -58,7 +58,7 @@ const Cart = {
         }
         .cart-drawer-overlay.active { opacity: 1; pointer-events: auto; }
         .cart-drawer {
-          position: fixed; top: 0; right: 0; width: 100%; max-width: 420px; height: 100vh;
+          position: fixed; top: 0; right: 0; width: 100%; max-width: 420px; height: 100%; height: 100dvh;
           background: var(--c-pearl); z-index: 9999;
           transform: translateX(100%); transition: transform var(--dur-base) var(--ease-out-expo);
           display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.1);

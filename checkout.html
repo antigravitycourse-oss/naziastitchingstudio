@@ -65,6 +65,13 @@
       border-top: 1px solid var(--c-border); font-family: var(--ff-heading);
       font-size: var(--fs-xl); color: var(--c-primary); font-weight: var(--fw-bold);
     }
+    
+    @media (max-width: 480px) {
+      .brand-subtitle { display: none; }
+      .brand-title { font-size: 1.25rem; }
+      .brand-icon { width: 36px; height: 36px; }
+      .btn-link { font-size: 12px; white-space: nowrap; padding: 4px; }
+    }
   </style>
 </head>
 <body>
@@ -89,16 +96,16 @@
   </div>
 
   <main class="container mb-16">
+    <div class="step-indicator">
+      <div class="step completed">1. Cart</div>
+      <div class="step active">2. Details</div>
+      <div class="step">3. Payment</div>
+    </div>
+    
     <div class="checkout-layout">
       
       <!-- MAIN CHECKOUT AREA -->
       <div>
-        <div class="step-indicator">
-          <div class="step completed">1. Cart</div>
-          <div class="step active">2. Details</div>
-          <div class="step">3. Payment</div>
-        </div>
-
         <div class="card" style="padding: var(--sp-8);">
           <h2 class="mb-6">Shipping Details</h2>
           <div class="grid-2 mb-4">
