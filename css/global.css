@@ -152,6 +152,7 @@ main { padding-top: var(--nav-h); }
   display: flex;
   align-items: center;
   gap: var(--sp-6);
+  z-index: 2;
   transform-origin: top left;
   transition: transform 2s cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -166,6 +167,7 @@ main { padding-top: var(--nav-h); }
 .preloader-icon {
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
 .crest-bg {
@@ -173,7 +175,7 @@ main { padding-top: var(--nav-h); }
   animation: crestFadeIn 0.8s ease-out forwards;
 }
 
-.crest-border {
+.crest-border-mask {
   animation: traceDashedLine 1.5s ease-out forwards;
   animation-delay: 0.5s;
 }
@@ -181,7 +183,7 @@ main { padding-top: var(--nav-h); }
 .crest-n {
   opacity: 0;
   animation: slideInN 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-delay: 1.2s;
+  animation-delay: 2.0s;
 }
 
 .preloader-text {
@@ -211,20 +213,21 @@ main { padding-top: var(--nav-h); }
 }
 
 /* Staggered animation triggers for JS to add */
-.run-dance .preloader-title span:nth-child(1) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.8s, shimmer 3s linear infinite 2.6s; }
-.run-dance .preloader-title span:nth-child(2) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.9s, shimmer 3s linear infinite 2.7s; }
-.run-dance .preloader-title span:nth-child(3) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 2.0s, shimmer 3s linear infinite 2.8s; }
-.run-dance .preloader-title span:nth-child(4) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 2.1s, shimmer 3s linear infinite 2.9s; }
-.run-dance .preloader-title span:nth-child(5) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 2.2s, shimmer 3s linear infinite 3.0s; }
+.run-dance .preloader-title span:nth-child(1) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 3.5s, shimmer 3s linear infinite 4.3s; }
+.run-dance .preloader-title span:nth-child(2) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 3.6s, shimmer 3s linear infinite 4.4s; }
+.run-dance .preloader-title span:nth-child(3) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 3.7s, shimmer 3s linear infinite 4.5s; }
+.run-dance .preloader-title span:nth-child(4) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 3.8s, shimmer 3s linear infinite 4.6s; }
+.run-dance .preloader-title span:nth-child(5) { animation: danceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 3.9s, shimmer 3s linear infinite 4.7s; }
 
 .preloader-subtitle {
   font-family: var(--ff-body);
   font-size: 1rem;
   font-weight: 600;
-  color: var(--c-accent); /* Red/crimson */
+  color: var(--c-gold);
   letter-spacing: 4px;
   display: flex;
   gap: 12px;
+  text-transform: uppercase;
 }
 
 .preloader-subtitle span {
@@ -249,7 +252,11 @@ main { padding-top: var(--nav-h); }
 /* Flicker Shine */
 .run-shine .preloader-title span,
 .run-shine .preloader-subtitle span {
-  animation: flickerShine 0.5s ease-in-out infinite alternate !important;
+  animation: flickerShine 6s ease-in-out forwards !important;
+  opacity: 1 !important;
+}
+.run-shine .crest-golden-group {
+  animation: flickerShine 6s ease-in-out forwards !important;
 }
 
 /* Glide and Fade out */
@@ -260,6 +267,16 @@ main { padding-top: var(--nav-h); }
 
 #preloader.fade-up .preloader-bg {
   animation: preloaderBgUp 2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* Lock final state of ALL animated elements to prevent animation reset drop-outs */
+#preloader.fade-up .crest-n,
+#preloader.fade-up .crest-border,
+#preloader.fade-up .preloader-title span,
+#preloader.fade-up .preloader-subtitle span {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 @media (max-width: 768px) {

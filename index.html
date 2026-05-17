@@ -15,14 +15,14 @@
   <meta property="og:url" content="https://naziastitchingstudio.vercel.app/">
   <meta property="og:title" content="Nazia Stitching Studio | Bespoke & Luxury Prêt">
   <meta property="og:description" content="Experience premium bespoke stitching and luxury Pakistani fashion. International shipping available.">
-  <meta property="og:image" content="https://naziastitchingstudio.vercel.app/images/bg-home.webp">
+  <meta property="og:image" content="https://naziastitchingstudio.vercel.app/images/women-bridal-red-lehenga.png">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://naziastitchingstudio.vercel.app/">
   <meta property="twitter:title" content="Nazia Stitching Studio | Bespoke & Luxury Prêt">
   <meta property="twitter:description" content="Experience premium bespoke stitching and luxury Pakistani fashion. International shipping available.">
-  <meta property="twitter:image" content="https://naziastitchingstudio.vercel.app/images/bg-home.webp">
+  <meta property="twitter:image" content="https://naziastitchingstudio.vercel.app/images/women-bridal-red-lehenga.png">
 
   <!-- JSON-LD LocalBusiness Schema -->
   <script type="application/ld+json">
@@ -30,7 +30,7 @@
     "@context": "https://schema.org",
     "@type": "TailorShop",
     "name": "Nazia Stitching Studio",
-    "image": "https://naziastitchingstudio.vercel.app/images/bg-home.webp",
+    "image": "https://naziastitchingstudio.vercel.app/images/women-bridal-red-lehenga.png",
     "@id": "https://naziastitchingstudio.vercel.app/",
     "url": "https://naziastitchingstudio.vercel.app/",
     "telephone": "+923008771713",
@@ -89,24 +89,48 @@
       position: absolute;
       top: 0; right: 0; bottom: 0;
       width: 55%;
+      overflow: hidden;
       z-index: 0;
     }
-    .hero-bg img {
+    .hero-bg .slide {
+      position: absolute;
+      inset: 0;
       width: 100%; height: 100%; object-fit: cover;
-      object-position: center;
+      object-position: center top;
+      opacity: 0;
+      animation: heroSlideshow 20s infinite linear;
+    }
+    .hero-bg .slide-1 { animation-delay: 0s; }
+    .hero-bg .slide-2 { animation-delay: 5s; }
+    .hero-bg .slide-3 { animation-delay: 10s; }
+    .hero-bg .slide-4 { animation-delay: 15s; }
+
+    @keyframes heroSlideshow {
+      0% { opacity: 0; transform: scale(1.05); }
+      5% { opacity: 1; transform: scale(1); }
+      25% { opacity: 1; transform: scale(1); }
+      30% { opacity: 0; transform: scale(1.05); }
+      100% { opacity: 0; transform: scale(1.05); }
     }
     .hero-bg::after {
       content: ''; position: absolute; inset: 0;
-      background: linear-gradient(90deg, var(--c-pearl) 0%, transparent 100%);
+      background: linear-gradient(90deg, var(--c-pearl) 0%, rgba(248, 245, 240, 0) 100%);
+      z-index: 2;
+      pointer-events: none;
     }
     .hero-content {
       position: relative; z-index: 1;
       width: 50%;
       padding-right: var(--sp-8);
     }
+    @media (max-width: 1200px) {
+      .hero-bg { width: 60%; }
+    }
     @media (max-width: 992px) {
       .hero-bg { width: 100%; }
-      .hero-bg::after { background: linear-gradient(to bottom, rgba(248, 245, 240, 0.3) 0%, rgba(248, 245, 240, 0.9) 80%); }
+      .hero-bg::after { 
+        background: linear-gradient(to bottom, rgba(248, 245, 240, 0) 0%, rgba(248, 245, 240, 0.7) 60%, var(--c-pearl) 100%); 
+      }
       .hero-content { width: 100%; padding-right: 0; text-align: center; }
       .hero-content .eyebrow {
         color: var(--c-gold-dark);
@@ -189,9 +213,16 @@
     <div class="preloader-content" id="preloader-content">
       <div class="preloader-crest" id="preloader-crest">
         <svg class="preloader-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <mask id="draw-mask">
+              <circle cx="50" cy="50" r="42" stroke="white" stroke-width="6" fill="none" stroke-dasharray="264" stroke-dashoffset="264" class="crest-border-mask" transform="rotate(-90 50 50)"/>
+            </mask>
+          </defs>
           <circle cx="50" cy="50" r="48" fill="var(--c-primary-dark)" class="crest-bg"/>
-          <circle cx="50" cy="50" r="42" stroke="var(--c-gold)" stroke-width="2" stroke-dasharray="264" stroke-dashoffset="264" class="crest-border"/>
-          <path d="M35 70V30L65 70V30" stroke="var(--c-gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="crest-n"/>
+          <g class="crest-golden-group">
+            <circle cx="50" cy="50" r="42" stroke="var(--c-gold)" stroke-width="2" stroke-dasharray="6 4" mask="url(#draw-mask)" class="crest-border"/>
+            <path d="M35 70V30L65 70V30" stroke="var(--c-gold)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="crest-n"/>
+          </g>
         </svg>
       </div>
       <div class="preloader-text">
@@ -236,7 +267,7 @@
           span.textContent = textToSplit[i];
           // Randomize direction: left or right
           const isLeft = Math.random() > 0.5;
-          const delay = 2.6 + (i * 0.1);
+          const delay = 4.5 + (i * 0.1);
           span.style.animation = `danceIn${isLeft ? 'Left' : 'Right'} 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards ${delay}s`;
           subtitle.appendChild(span);
         }
@@ -246,33 +277,46 @@
           content.classList.add('run-dance');
         }, 100);
 
-        // Trigger Crest Flip
+        // Trigger Crest Flip (After N is placed)
         setTimeout(() => {
           content.classList.add('run-flip');
-        }, 3400);
+        }, 3500);
 
-        // Phase 3: Lock and Shine for 4 sec
+        // Phase 3: Lock and Shine for 4 sec (After text finishes)
         setTimeout(() => {
           content.classList.add('run-shine');
           // Clear inline animations to allow shine CSS to apply
           subtitle.querySelectorAll('span').forEach(s => s.style.animation = '');
-        }, 5000);
+        }, 7000);
 
-        // Phase 4: Transition to Navbar
+        // Phase 4: Transition to Navbar (6 seconds after shine starts)
         setTimeout(() => {
           content.classList.remove('run-shine');
           
-          // Get target coordinates of the real brand logo icon
-          const targetCrest = document.querySelector('.nav-brand .brand-icon');
-          const targetRect = targetCrest.getBoundingClientRect();
+          // IMPORTANT: Temporarily remove filters (drop-shadows) because they artificially inflate getBoundingClientRect()
+          const originalFilter = content.style.filter;
+          content.style.filter = 'none';
+          
+          // Force opacity 1 to ensure the browser computes layout properly for measurement
+          const mainNavBrand = document.getElementById('main-nav-brand');
+          if (mainNavBrand) mainNavBrand.style.opacity = '1';
+          
+          // Get target coordinates from the reliable anchor tag (which wraps the icon exactly)
+          const targetRect = mainNavBrand.getBoundingClientRect();
           
           // Get source coordinates
           const sourceCrest = document.getElementById('preloader-crest');
           const sourceRect = sourceCrest.getBoundingClientRect();
           const contentRect = content.getBoundingClientRect();
           
-          // Calculate scale to match crest sizes
-          const scaleRatio = targetRect.width / sourceRect.width;
+          // Restore filter after measurement
+          content.style.filter = originalFilter;
+          
+          // Calculate precise scale using mathematically guaranteed CSS dimensions!
+          // SVG getBoundingClientRect is buggy on some browsers when initially opacity: 0.
+          const targetWidth = 44; 
+          const sourceWidth = window.innerWidth <= 768 ? 100 : 150;
+          const scaleRatio = targetWidth / sourceWidth;
           
           // Calculate precise translation accounting for transform-origin (top left of content)
           const xMove = targetRect.left - (contentRect.left + (sourceRect.left - contentRect.left) * scaleRatio);
@@ -290,7 +334,7 @@
             sessionStorage.setItem('preloaderShown', 'true');
           }, 2000);
           
-        }, 9000);
+        }, 13000);
       });
     }
   </script>
@@ -328,7 +372,10 @@
     <!-- HERO -->
     <section class="hero">
       <div class="hero-bg reveal reveal-left">
-        <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" alt="Luxury Bridal Couture">
+        <img src="images/women-bridal-red-lehenga.png" alt="Luxury Bridal Couture" class="slide slide-1">
+        <img src="images/women-emerald-silk-gharara.jpg" alt="Emerald Silk Gharara" class="slide slide-2">
+        <img src="images/girls-pink-frock.png" alt="Girls Pink Frock" class="slide slide-3">
+        <img src="images/women-casual-lawn.png" alt="Women Casual Lawn" class="slide slide-4">
       </div>
       <div class="container">
         <div class="hero-content reveal reveal-up">
