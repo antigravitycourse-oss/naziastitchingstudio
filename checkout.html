@@ -115,25 +115,25 @@
           <div class="grid-2 mb-4">
             <div class="form-group">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" placeholder="e.g. Ali">
+              <input type="text" id="chkFirstName" class="form-control" placeholder="e.g. Ali">
             </div>
             <div class="form-group">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" placeholder="e.g. Hassan">
+              <input type="text" id="chkLastName" class="form-control" placeholder="e.g. Hassan">
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Address</label>
-            <input type="text" class="form-control" placeholder="e.g. House 42, Street 5, DHA">
+            <input type="text" id="chkAddress" class="form-control" placeholder="e.g. House 42, Street 5, DHA">
           </div>
           <div class="grid-2 mb-8">
             <div class="form-group">
               <label class="form-label">City</label>
-              <input type="text" class="form-control" placeholder="e.g. Lahore">
+              <input type="text" id="chkCity" class="form-control" placeholder="e.g. Lahore">
             </div>
             <div class="form-group">
               <label class="form-label">Phone</label>
-              <input type="tel" class="form-control" placeholder="e.g. +92 300 1234567">
+              <input type="tel" id="chkPhone" class="form-control" placeholder="e.g. +92 300 1234567">
             </div>
           </div>
 
@@ -179,7 +179,7 @@
             <span>Total</span><span id="checkout-total">Rs. 0</span>
           </div>
 
-          <button class="btn btn-primary mt-8" style="width: 100%; height: 60px; font-size: var(--fs-lg);">Complete Order</button>
+          <button onclick="processCheckout(this)" class="btn btn-primary mt-8" style="width: 100%; height: 60px; font-size: var(--fs-lg);">Complete Order</button>
           <div class="text-center mt-4" style="font-size: var(--fs-xs); color: var(--c-text-muted);">
             🔒 Secure 256-bit SSL encryption
           </div>
@@ -232,7 +232,75 @@
       const formattedTotal = Cart.formatPrice(subtotal);
       subtotalEl.textContent = formattedTotal;
       totalEl.textContent = formattedTotal;
+      
+      // Store total for API
+      window.checkoutTotal = subtotal;
     });
+
+    async function processCheckout(btn) {
+      const cart = Cart.getCart();
+      if (cart.length === 0) {
+        window.ShowAlert("Your cart is empty.");
+        return;
+      }
+
+      // We need user email, verify if logged in, else mock
+      const savedUser = localStorage.getItem('currentUser');
+      const email = savedUser ? JSON.parse(savedUser).email : 'guest@example.com';
+
+      const firstName = document.getElementById('chkFirstName').value;
+      const phone = document.getElementById('chkPhone').value;
+      const address = document.getElementById('chkAddress').value;
+      const city = document.getElementById('chkCity').value;
+
+      if (!firstName || !phone || !address || !city) {
+        window.ShowAlert("Please fill in all shipping details.");
+        return;
+      }
+
+      const activeBtn = document.querySelector('.pm-btn.active');
+      const paymentMethod = activeBtn ? activeBtn.textContent : 'Credit Card';
+
+      btn.disabled = true;
+      const origText = btn.textContent;
+      btn.textContent = "Processing securely...";
+
+      try {
+        const payload = {
+          items: cart.map(i => ({ name: i.title, quantity: i.quantity, price: Cart.parsePrice(i.price) })),
+          total: window.checkoutTotal,
+          paymentMethod,
+          customer: { firstName, phone, address, city, email }
+        };
+
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          // Clear cart
+          localStorage.removeItem('nazia_cart');
+          Cart.updateCartCount();
+          
+          window.ShowAlert(`Order Successful! Your Order ID is: ${data.orderId}`);
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 2000);
+        } else {
+          window.ShowAlert(data.error || "Failed to process order.");
+          btn.disabled = false;
+          btn.textContent = origText;
+        }
+      } catch (e) {
+        window.ShowAlert("Network error. Please try again later.");
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    }
   </script>
   <script src="js/auth.js"></script>
   <script src="js/chatbot.js"></script>

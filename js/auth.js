@@ -180,8 +180,17 @@ const Auth = {
               
               <div class="auth-body">
                 <div id="pane-signup">
-                  <form onsubmit="Auth.simulateSignup(event)">
-                    <div class="phone-input-wrapper">
+                  <form onsubmit="Auth.register(event)">
+                    <div class="auth-input-group" style="margin-bottom: 12px;">
+                      <input type="text" id="signupName" class="auth-input" placeholder="Full Name" required>
+                    </div>
+                    <div class="auth-input-group" style="margin-bottom: 12px;">
+                      <input type="email" id="signupEmail" class="auth-input" placeholder="Email Address" required>
+                    </div>
+                    <div class="auth-input-group" style="margin-bottom: 12px;">
+                      <input type="password" id="signupPassword" class="auth-input" placeholder="Create Password" required>
+                    </div>
+                    <div class="phone-input-wrapper" style="margin-bottom: 16px;">
                       <div class="custom-country-select" onclick="Auth.toggleCountryDropdown(this)">
                         <span class="selected-flag">🇵🇰</span>
                         <span class="dropdown-arrow">▼</span>
@@ -189,8 +198,6 @@ const Auth = {
                           <li onclick="Auth.selectCountry(event, '+92', '🇵🇰')">🇵🇰 Pakistan (+92)</li>
                           <li onclick="Auth.selectCountry(event, '+1', '🇺🇸')">🇺🇸 United States (+1)</li>
                           <li onclick="Auth.selectCountry(event, '+44', '🇬🇧')">🇬🇧 United Kingdom (+44)</li>
-                          <li onclick="Auth.selectCountry(event, '+971', '🇦🇪')">🇦🇪 UAE (+971)</li>
-                          <li onclick="Auth.selectCountry(event, '+61', '🇦🇺')">🇦🇺 Australia (+61)</li>
                         </ul>
                       </div>
                       <input type="tel" id="signupPhone" class="phone-input" value="+92 " placeholder="Phone number" required>
@@ -198,13 +205,10 @@ const Auth = {
                     
                     <label style="font-size: 12px; color: #666; display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px;">
                       <input type="checkbox" required style="margin-top: 3px;"> 
-                      <span>By creating and/or using your account, you agree to our <a href="#" class="auth-link">Terms of Use</a> and <a href="#" class="auth-link">Privacy Policy</a>.</span>
+                      <span>By creating your account, you agree to our Terms of Use and Privacy Policy.</span>
                     </label>
                     
-                    <button type="submit" class="auth-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                      <img src="https://lzd-img-global.slatic.net/g/tps/imgextra/i2/O1CN01a3DUz31SqzLbTfmQ2_!!6000000002299-2-tps-54-54.png" width="20" height="20" alt="WhatsApp">
-                      Send code via Whatsapp
-                    </button>
+                    <button type="submit" class="auth-submit">Create Account</button>
                     
                     <div class="auth-footer">
                       Already have an account? <a href="#" class="auth-link" onclick="Auth.showLogin(event)">Log in Now</a>
@@ -392,66 +396,94 @@ const Auth = {
     input.focus();
   },
 
-  // Database Simulation using LocalStorage
-  login(e) {
+  // Real API Integration
+  async login(e) {
     e.preventDefault();
     const email = document.getElementById('authEmail').value;
     const pwd = document.getElementById('authPassword').value;
     const remember = document.getElementById('authRemember').checked;
     
-    // Simple mock logic: accept any non-empty credential to simulate a robust login without requiring a real backend registry right now
-    if (email && pwd) {
-      this.currentUser = { email: email, name: email.split('@')[0] };
-      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pwd })
+      });
+      const data = await res.json();
       
-      if (remember) {
-        localStorage.setItem('rememberedEmail', email);
+      if (res.ok) {
+        this.currentUser = data.user;
+        if (remember) {
+          localStorage.setItem('rememberedEmail', email);
+        } else {
+          localStorage.removeItem('rememberedEmail');
+        }
+        window.ShowAlert('Login Successful! Welcome ' + this.currentUser.name);
+        this.closeModal();
+        this.checkAuth();
       } else {
-        localStorage.removeItem('rememberedEmail');
+        window.ShowAlert(data.error || 'Login failed');
       }
-
-      window.ShowAlert('Login Successful! Welcome ' + this.currentUser.name);
-      this.closeModal();
-      this.checkAuth();
+    } catch (err) {
+      window.ShowAlert('Network error connecting to backend.');
     }
   },
 
-  simulateSignup(e) {
+  async register(e) {
     e.preventDefault();
-    const email = document.getElementById('authEmail').value || 'newuser@example.com';
-    window.ShowAlert('Simulating Signup for: ' + email + '... Automatically logging in!');
-    this.currentUser = { email: email, name: email.split('@')[0] };
-    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-    this.closeModal();
-    this.checkAuth();
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const phone = document.getElementById('signupPhone').value;
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, phone })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        window.ShowAlert('Registration successful! Please log in.');
+        this.showLogin(null);
+      } else {
+        window.ShowAlert(data.error || 'Registration failed');
+      }
+    } catch (err) {
+      window.ShowAlert('Network error connecting to backend.');
+    }
   },
 
   sendCode(e) {
     e.preventDefault();
-    const phone = document.getElementById('authPhone').value;
-    const code = document.getElementById('authCountry').value;
-    window.ShowAlert('Simulating Whatsapp code sent to: ' + code + ' ' + phone);
+    window.ShowAlert('WhatsApp OTP is not configured in backend yet.');
   },
 
   simulateSocial(provider) {
-    window.ShowAlert('Simulating ' + provider + ' login popup... Success!');
-    this.currentUser = { email: 'social@example.com', name: provider + ' User' };
-    localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-    this.closeModal();
-    this.checkAuth();
+    window.ShowAlert(provider + ' OAuth coming soon.');
   },
 
-  logout() {
+  async logout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {}
     this.currentUser = null;
-    localStorage.removeItem('currentUser');
     window.ShowAlert('You have successfully logged out.');
     this.checkAuth();
   },
 
-  checkAuth() {
-    const saved = localStorage.getItem('currentUser');
-    if (saved) {
-      this.currentUser = JSON.parse(saved);
+  async checkAuth() {
+    try {
+      const res = await fetch('/api/auth/me');
+      const data = await res.json();
+      if (data.authenticated) {
+        this.currentUser = data.user;
+      } else {
+        this.currentUser = null;
+      }
+    } catch (err) {
+      this.currentUser = null;
     }
 
     const loginBtns = document.querySelectorAll('.nav-login-btn');
