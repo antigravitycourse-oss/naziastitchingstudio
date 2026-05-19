@@ -119,10 +119,12 @@ const Auth = {
             this.currentUser = data.user;
             localStorage.setItem('currentUser', JSON.stringify(data.user));
             this.checkAuth();
-            window.ShowAlert('Login successful!');
             
             // Clean up URL
             window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // Redirect to dashboard
+            window.location.href = '/portal.html';
           }
         })
         .catch(err => console.error('Error fetching session:', err));
@@ -794,6 +796,7 @@ const Auth = {
         window.ShowAlert('Login Successful! Welcome ' + this.currentUser.name);
         this.closeModal();
         this.checkAuth();
+        window.location.href = '/portal.html';
       } else {
         window.ShowAlert(data.error || 'Invalid email or password');
       }
