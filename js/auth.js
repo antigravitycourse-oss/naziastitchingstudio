@@ -619,7 +619,7 @@ const Auth = {
 
     if (isEmail) {
       try {
-        const res = await fetch('/api/auth/forgot-password', {
+        const res = await fetch('/api/auth-handler?action=forgot-password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: input })
@@ -689,7 +689,7 @@ const Auth = {
     if (isEmail) {
       // Verify via Vercel Backend (MongoDB)
       try {
-        const res = await fetch('/api/auth/forgot-password-verify', {
+        const res = await fetch('/api/auth-handler?action=forgot-password-verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ account: this.forgotContext.account, otp })
@@ -720,7 +720,7 @@ const Auth = {
         
         if (this.forgotContext.isSignupLogin) {
           // This was a WhatsApp Signup/Login flow
-          const res = await fetch('/api/auth/whatsapp-verify', {
+          const res = await fetch('/api/auth-handler?action=whatsapp-verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone: this.forgotContext.account, token: idToken, isFirebase: true })
@@ -756,7 +756,7 @@ const Auth = {
     const newPassword = document.getElementById('forgotNewPassword').value;
 
     try {
-      const res = await fetch('/api/auth/forgot-password-reset', {
+      const res = await fetch('/api/auth-handler?action=forgot-password-reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: this.forgotContext.token, password: newPassword })
