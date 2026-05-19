@@ -176,8 +176,7 @@ const Auth = {
                     </div>
                     
                     <button type="submit" class="auth-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                      <img src="https://lzd-img-global.slatic.net/g/tps/imgextra/i2/O1CN01a3DUz31SqzLbTfmQ2_!!6000000002299-2-tps-54-54.png" width="20" height="20" alt="WhatsApp">
-                      Send code via Whatsapp
+                      Send SMS Code
                     </button>
                     
                     <div class="auth-footer">
@@ -228,8 +227,7 @@ const Auth = {
                     </label>
                     
                     <button type="submit" class="auth-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                      <img src="https://lzd-img-global.slatic.net/g/tps/imgextra/i2/O1CN01a3DUz31SqzLbTfmQ2_!!6000000002299-2-tps-54-54.png" width="20" height="20" alt="WhatsApp">
-                      Send code via Whatsapp
+                      Send SMS Code
                     </button>
                     
                     <div class="auth-footer">
