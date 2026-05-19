@@ -776,7 +776,7 @@ const Auth = {
     if (!email || !pwd) return;
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth-handler?action=login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: pwd })
