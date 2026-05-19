@@ -320,12 +320,12 @@ const Auth = {
 
                 <form onsubmit="Auth.handleForgotVerify(event)" style="display: flex; flex-direction: column; flex-grow: 1; width: 100%;">
                   <div class="otp-container" style="width: 100%; justify-content: space-between;">
-                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 1)">
-                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 2)">
-                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 3)">
-                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 4)">
-                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 5)">
-                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 6)">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 1)" onkeydown="Auth.handleOtpKeydown(event, this, 1)" onpaste="Auth.handleOtpPaste(event)" onfocus="this.select()">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 2)" onkeydown="Auth.handleOtpKeydown(event, this, 2)" onpaste="Auth.handleOtpPaste(event)" onfocus="this.select()">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 3)" onkeydown="Auth.handleOtpKeydown(event, this, 3)" onpaste="Auth.handleOtpPaste(event)" onfocus="this.select()">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 4)" onkeydown="Auth.handleOtpKeydown(event, this, 4)" onpaste="Auth.handleOtpPaste(event)" onfocus="this.select()">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 5)" onkeydown="Auth.handleOtpKeydown(event, this, 5)" onpaste="Auth.handleOtpPaste(event)" onfocus="this.select()">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 6)" onkeydown="Auth.handleOtpKeydown(event, this, 6)" onpaste="Auth.handleOtpPaste(event)" onfocus="this.select()">
                   </div>
                   
                   <div id="otpTimerWrapper" style="margin-top: 16px; font-size: 14px; color: #999;">
@@ -578,6 +578,54 @@ const Auth = {
     document.querySelectorAll('.auth-view').forEach(view => {
       view.classList.remove('active');
     });
+  },
+
+  handleOtpInput(input, index) {
+    if (input.value && index < 6) {
+      input.nextElementSibling.focus();
+    }
+    // Auto submit if last box is filled
+    if (index === 6 && input.value) {
+      const form = input.closest('form');
+      // Fire submit event
+      if (form) {
+        form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+      }
+    }
+  },
+
+  handleOtpKeydown(e, input, index) {
+    if (e.key === 'Backspace' && !input.value && index > 1) {
+      // Move to previous box on backspace if empty
+      input.previousElementSibling.focus();
+    } else if (e.key === 'ArrowRight' && index < 6) {
+      e.preventDefault();
+      input.nextElementSibling.focus();
+    } else if (e.key === 'ArrowLeft' && index > 1) {
+      e.preventDefault();
+      input.previousElementSibling.focus();
+    }
+  },
+
+  handleOtpPaste(e) {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text/plain').trim();
+    if (/^\d{1,6}$/.test(pastedData)) {
+      const inputs = e.target.closest('.otp-container').querySelectorAll('.otp-box');
+      for (let i = 0; i < pastedData.length; i++) {
+        if (inputs[i]) {
+          inputs[i].value = pastedData[i];
+          inputs[i].focus();
+        }
+      }
+      // If 6 digits pasted, trigger submit
+      if (pastedData.length === 6) {
+        const form = e.target.closest('form');
+        if (form) {
+          form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+      }
+    }
   },
 
   togglePassword(inputId = 'authPassword') {
