@@ -125,9 +125,15 @@ const Auth = {
             
             // Redirect to dashboard
             window.location.href = '/portal.html';
+            window.location.href = '/portal.html';
+          } else {
+            window.ShowAlert('Session check failed: ' + JSON.stringify(data));
           }
         })
-        .catch(err => console.error('Error fetching session:', err));
+        .catch(err => {
+          console.error('Error fetching session:', err);
+          window.ShowAlert('Network error checking session');
+        });
     }
   },
 
@@ -798,10 +804,10 @@ const Auth = {
         this.checkAuth();
         window.location.href = '/portal.html';
       } else {
-        window.ShowAlert(data.error || 'Invalid email or password');
+        window.ShowAlert(data.error || 'Login API Failed: ' + JSON.stringify(data));
       }
     } catch(err) {
-      window.ShowAlert("Network error occurred during login.");
+      window.ShowAlert("Network error occurred during login: " + err.message);
     }
   },
 
