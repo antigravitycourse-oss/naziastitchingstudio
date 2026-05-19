@@ -108,6 +108,25 @@ const Auth = {
         }
       }, 500);
     }
+
+    // Check for OAuth success
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('login') === 'success') {
+      fetch('/api/auth-handler?action=me')
+        .then(res => res.json())
+        .then(data => {
+          if (data.authenticated && data.user) {
+            this.currentUser = data.user;
+            localStorage.setItem('currentUser', JSON.stringify(data.user));
+            this.checkAuth();
+            window.ShowAlert('Login successful!');
+            
+            // Clean up URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        })
+        .catch(err => console.error('Error fetching session:', err));
+    }
   },
 
   injectModal() {
