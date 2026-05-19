@@ -1,3 +1,29 @@
+// Load Firebase SDK for Phone Auth
+(function() {
+  const script1 = document.createElement('script');
+  script1.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js';
+  document.head.appendChild(script1);
+
+  const script2 = document.createElement('script');
+  script2.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js';
+  document.head.appendChild(script2);
+
+  script2.onload = () => {
+    // IMPORTANT: Replace this placeholder config with your real Firebase Project Config!
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "your-project-id.firebaseapp.com",
+      projectId: "your-project-id",
+      storageBucket: "your-project-id.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  };
+})();
+
 // Global Custom Alert
 window.ShowAlert = function(message) {
   // Create overlay
@@ -120,7 +146,7 @@ const Auth = {
                       <label style="font-size: 12px; color: #666; display: flex; align-items: center; gap: 4px;">
                         <input type="checkbox" id="authRemember"> Remember me
                       </label>
-                      <a href="#" class="auth-link">Forgot password?</a>
+                      <a href="#" class="auth-link" onclick="Auth.forgotPassword(event)">Forgot password?</a>
                     </div>
                     
                     <button type="submit" class="auth-submit">LOGIN</button>
@@ -163,10 +189,10 @@ const Auth = {
               
               <div class="auth-or">Or, login with</div>
               <div class="auth-social" style="padding-bottom: 24px;">
-                <button class="auth-social-btn" onclick="Auth.simulateSocial('Google')">
+                <button type="button" class="auth-social-btn" onclick="window.location.href='/api/auth/google'">
                   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg> Google
                 </button>
-                <button class="auth-social-btn" onclick="Auth.simulateSocial('Facebook')">
+                <button type="button" class="auth-social-btn" onclick="window.location.href='/api/auth/facebook'">
                   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" fill="#1877f2"/></svg> Facebook
                 </button>
               </div>
@@ -180,17 +206,8 @@ const Auth = {
               
               <div class="auth-body">
                 <div id="pane-signup">
-                  <form onsubmit="Auth.register(event)">
-                    <div class="auth-input-group" style="margin-bottom: 12px;">
-                      <input type="text" id="signupName" class="auth-input" placeholder="Full Name" required>
-                    </div>
-                    <div class="auth-input-group" style="margin-bottom: 12px;">
-                      <input type="email" id="signupEmail" class="auth-input" placeholder="Email Address" required>
-                    </div>
-                    <div class="auth-input-group" style="margin-bottom: 12px;">
-                      <input type="password" id="signupPassword" class="auth-input" placeholder="Create Password" required>
-                    </div>
-                    <div class="phone-input-wrapper" style="margin-bottom: 16px;">
+                  <form onsubmit="Auth.simulateSignup(event)">
+                    <div class="phone-input-wrapper">
                       <div class="custom-country-select" onclick="Auth.toggleCountryDropdown(this)">
                         <span class="selected-flag">🇵🇰</span>
                         <span class="dropdown-arrow">▼</span>
@@ -198,6 +215,8 @@ const Auth = {
                           <li onclick="Auth.selectCountry(event, '+92', '🇵🇰')">🇵🇰 Pakistan (+92)</li>
                           <li onclick="Auth.selectCountry(event, '+1', '🇺🇸')">🇺🇸 United States (+1)</li>
                           <li onclick="Auth.selectCountry(event, '+44', '🇬🇧')">🇬🇧 United Kingdom (+44)</li>
+                          <li onclick="Auth.selectCountry(event, '+971', '🇦🇪')">🇦🇪 UAE (+971)</li>
+                          <li onclick="Auth.selectCountry(event, '+61', '🇦🇺')">🇦🇺 Australia (+61)</li>
                         </ul>
                       </div>
                       <input type="tel" id="signupPhone" class="phone-input" value="+92 " placeholder="Phone number" required>
@@ -205,10 +224,13 @@ const Auth = {
                     
                     <label style="font-size: 12px; color: #666; display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px;">
                       <input type="checkbox" required style="margin-top: 3px;"> 
-                      <span>By creating your account, you agree to our Terms of Use and Privacy Policy.</span>
+                      <span>By creating and/or using your account, you agree to our <a href="#" class="auth-link">Terms of Use</a> and <a href="#" class="auth-link">Privacy Policy</a>.</span>
                     </label>
                     
-                    <button type="submit" class="auth-submit">Create Account</button>
+                    <button type="submit" class="auth-submit" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                      <img src="https://lzd-img-global.slatic.net/g/tps/imgextra/i2/O1CN01a3DUz31SqzLbTfmQ2_!!6000000002299-2-tps-54-54.png" width="20" height="20" alt="WhatsApp">
+                      Send code via Whatsapp
+                    </button>
                     
                     <div class="auth-footer">
                       Already have an account? <a href="#" class="auth-link" onclick="Auth.showLogin(event)">Log in Now</a>
@@ -219,12 +241,123 @@ const Auth = {
               
               <div class="auth-or">Or, sign up with</div>
               <div class="auth-social" style="padding-bottom: 24px;">
-                <button class="auth-social-btn" onclick="Auth.simulateSocial('Google')">
+                <button type="button" class="auth-social-btn" onclick="window.location.href='/api/auth/google'">
                   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/><path d="M1 1h22v22H1z" fill="none"/></svg> Google
                 </button>
-                <button class="auth-social-btn" onclick="Auth.simulateSocial('Facebook')">
+                <button type="button" class="auth-social-btn" onclick="window.location.href='/api/auth/facebook'">
                   <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" fill="#1877f2"/></svg> Facebook
                 </button>
+              </div>
+            </div>
+
+            <!-- FORGOT PASSWORD - REQUEST -->
+            <div class="auth-view" id="view-forgot-request">
+              <div class="auth-header" style="justify-content: flex-start; padding-bottom: 24px; border-bottom: none;">
+                <h3 style="margin: 0; font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500; color: #333;">Forgot your password?</h3>
+              </div>
+              
+              <div class="auth-body" style="padding-top: 0; display: flex; flex-direction: column; flex-grow: 1;">
+                <p style="font-size: 14px; color: #555; margin-bottom: 24px; line-height: 1.5;">Please enter the account that you want to reset the password.</p>
+                <form onsubmit="Auth.handleForgotRequest(event)" style="display: flex; flex-direction: column; flex-grow: 1; width: 100%;">
+                  <div style="font-size: 14px; font-weight: 500; color: #333; margin-bottom: 8px;">Phone Number or Email</div>
+                  <div class="auth-input-group" style="width: 100%;">
+                    <input type="text" id="forgotInput" class="auth-input" placeholder="Please enter your Phone Number or Email" style="width: 100%; box-sizing: border-box;" required>
+                  </div>
+                  
+                  <div style="display: flex; gap: 12px; margin-top: auto; padding-bottom: 16px; width: 100%;">
+                    <button type="button" class="btn-forgot-action outline" style="flex: 1;" onclick="Auth.showLogin(event)">Back</button>
+                    <button type="submit" class="btn-forgot-action solid" style="flex: 1;">Confirm</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- FORGOT PASSWORD - VERIFY -->
+            <div class="auth-view" id="view-forgot-verify">
+              <div class="auth-header" style="justify-content: flex-start; padding-bottom: 24px; border-bottom: none;">
+                <h3 style="margin: 0; font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500; color: #333;">Verify your identity</h3>
+              </div>
+              
+              <div class="auth-body" style="padding-top: 0; display: flex; flex-direction: column; flex-grow: 1;">
+                <p style="font-size: 14px; color: #555; margin-bottom: 24px; line-height: 1.5;">Please enter the OTP via <span id="forgotVerifyTarget"></span> to continue</p>
+                
+                <div style="font-size: 14px; color: #555; margin-bottom: 16px;">
+                  Email:<span id="forgotVerifyEmail" style="color: #333; font-weight: 500;"></span> 
+                  <a href="#" class="auth-link" style="margin-left: 12px; font-size: 14px;" onclick="Auth.showForgotRequest(event)">Change Email</a>
+                </div>
+
+                <form onsubmit="Auth.handleForgotVerify(event)" style="display: flex; flex-direction: column; flex-grow: 1; width: 100%;">
+                  <div class="otp-container" style="width: 100%; justify-content: space-between;">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 1)">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 2)">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 3)">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 4)">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 5)">
+                    <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 6)">
+                  </div>
+                  
+                  <div style="margin-top: 16px; font-size: 14px; color: #999;">
+                    Resend OTP in <span style="color: #1a9cb7; font-weight: 500;">56</span> s
+                  </div>
+                  
+                  <div style="display: flex; gap: 12px; margin-top: auto; padding-bottom: 16px; width: 100%;">
+                    <button type="button" class="btn-forgot-action outline" style="flex: 1;" onclick="Auth.showForgotRequest(event)">Back</button>
+                    <button type="submit" class="btn-forgot-action solid" style="flex: 1;">Confirm</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- FORGOT PASSWORD - RESET -->
+            <div class="auth-view" id="view-forgot-reset">
+              <div class="auth-header" style="justify-content: flex-start; padding-bottom: 24px; border-bottom: none;">
+                <h3 style="margin: 0; font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500; color: #333;">Reset your password</h3>
+              </div>
+              
+              <div class="auth-body" style="padding-top: 0; display: flex; flex-direction: column; flex-grow: 1;">
+                <p style="font-size: 14px; color: #555; margin-bottom: 24px; line-height: 1.5;">Please enter your new password.</p>
+                <form onsubmit="Auth.handleForgotReset(event)" style="display: flex; flex-direction: column; flex-grow: 1; width: 100%;">
+                  <div style="font-size: 14px; font-weight: 500; color: #333; margin-bottom: 8px;">New Password</div>
+                  <div class="auth-input-group" style="width: 100%;">
+                    <input type="password" id="forgotNewPassword" class="auth-input" placeholder="Enter new password" style="width: 100%; box-sizing: border-box;" required>
+                    <button type="button" class="auth-eye" onclick="Auth.togglePassword('forgotNewPassword')">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36" width="24" height="24" stroke="currentColor" stroke-width="2.54" stroke-linecap="round" stroke-linejoin="round"><path d="M32.711 11c-3.166 4.841-8.573 8.03-14.71 8.03-6.139 0-11.546-3.189-14.712-8.03M9.79 17.5l-3 5m8.5-3-1 5.5m12.5-7.5 3 5m-8.5-3 1 5.5"></path></svg>
+                    </button>
+                  </div>
+                  
+                  <ul class="password-validation-list">
+                    <li>The length of Password should be 8 - 20 characters.</li>
+                    <li>Password should contain alphabets, numbers and special characters</li>
+                    <li>Password can only include ~.!@#$%^&*<> symbols</li>
+                  </ul>
+                  
+                  <div style="display: flex; gap: 12px; margin-top: auto; padding-bottom: 16px; width: 100%;">
+                    <button type="button" class="btn-forgot-action outline" style="flex: 1;" onclick="Auth.showForgotVerify(event)">Back</button>
+                    <button type="submit" class="btn-forgot-action solid" style="flex: 1;">Confirm</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- FORGOT PASSWORD - SUCCESS -->
+            <div class="auth-view" id="view-forgot-success">
+              <div class="auth-header" style="justify-content: flex-start; padding-bottom: 24px; border-bottom: none;">
+                <h3 style="margin: 0; font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500; color: #333;">Reset your password</h3>
+              </div>
+              
+              <div class="auth-body" style="padding-top: 0; text-align: center; display: flex; flex-direction: column; flex-grow: 1;">
+                <div style="margin: 20px 0 30px;">
+                  <!-- Using a generic shield/check icon matching the theme -->
+                  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#e6f5f8" stroke="#1a9cb7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 12l2 2 4-4" stroke="#1a9cb7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h4 style="font-size: 16px; color: #333; margin-bottom: 40px;">Your password has been reset successfully</h4>
+                
+                <div style="display: flex; margin-top: auto; padding-bottom: 16px; width: 100%;">
+                  <button type="button" class="btn-forgot-action solid" style="flex: 1; padding: 12px;" onclick="Auth.finishForgotSuccess()">Go Shopping</button>
+                </div>
               </div>
             </div>
 
@@ -338,32 +471,61 @@ const Auth = {
 
   showSignup(e) {
     if (e) e.preventDefault();
-    // Start sliding out the login view
-    document.getElementById('view-login').classList.remove('active');
-    
-    // Wait for the slide out animation to complete, then slide up the signup view
+    this.hideAllViews();
     setTimeout(() => {
       document.getElementById('view-signup').classList.add('active');
-    }, 600); // 600ms matches the new CSS transition time
+    }, 600);
   },
 
   showLogin(e) {
     if (e) e.preventDefault();
-    // Start sliding out the signup view
-    document.getElementById('view-signup').classList.remove('active');
-    
-    // Switch tab behind the scenes so it's ready
+    this.hideAllViews();
     if (e !== null) this.switchTab('password');
-    
-    // Wait for the slide out to complete, then slide up the login view
     setTimeout(() => {
       document.getElementById('view-login').classList.add('active');
-    }, e !== null ? 600 : 0); // No delay if opening modal fresh
+    }, e !== null ? 600 : 0);
   },
 
-  togglePassword() {
-    const input = document.getElementById('authPassword');
-    const btn = document.querySelector('.auth-eye');
+  showForgotRequest(e) {
+    if (e) e.preventDefault();
+    this.hideAllViews();
+    setTimeout(() => {
+      document.getElementById('view-forgot-request').classList.add('active');
+    }, 600);
+  },
+
+  showForgotVerify(e) {
+    if (e) e.preventDefault();
+    this.hideAllViews();
+    setTimeout(() => {
+      document.getElementById('view-forgot-verify').classList.add('active');
+    }, 600);
+  },
+
+  showForgotReset(e) {
+    if (e) e.preventDefault();
+    this.hideAllViews();
+    setTimeout(() => {
+      document.getElementById('view-forgot-reset').classList.add('active');
+    }, 600);
+  },
+
+  showForgotSuccess() {
+    this.hideAllViews();
+    setTimeout(() => {
+      document.getElementById('view-forgot-success').classList.add('active');
+    }, 600);
+  },
+
+  hideAllViews() {
+    document.querySelectorAll('.auth-view').forEach(view => {
+      view.classList.remove('active');
+    });
+  },
+
+  togglePassword(inputId = 'authPassword') {
+    const input = document.getElementById(inputId);
+    const btn = input.nextElementSibling;
     if (input.type === 'password') {
       input.type = 'text';
       btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
@@ -396,13 +558,204 @@ const Auth = {
     input.focus();
   },
 
-  // Real API Integration
+  // Forgot Password Flow Handlers
+  forgotPassword(e) {
+    if (e) e.preventDefault();
+    this.showForgotRequest(e);
+  },
+
+  setupRecaptcha() {
+    if (!window.recaptchaVerifier) {
+      if (!document.getElementById('recaptcha-container')) {
+        const div = document.createElement('div');
+        div.id = 'recaptcha-container';
+        document.body.appendChild(div);
+      }
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        'size': 'invisible'
+      });
+    }
+  },
+
+  async handleForgotRequest(e) {
+    e.preventDefault();
+    const input = document.getElementById('forgotInput').value;
+    if (!input) return;
+
+    this.forgotContext = { account: input };
+    const isEmail = input.includes('@');
+
+    if (isEmail) {
+      try {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: input })
+        });
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+          document.getElementById('forgotVerifyTarget').innerText = input;
+          document.getElementById('forgotVerifyEmail').innerText = input;
+          this.showForgotVerify(null);
+        } else {
+          window.ShowAlert(data.error || "Failed to send reset link.");
+        }
+      } catch(err) {
+        window.ShowAlert("Network error occurred.");
+      }
+    } else {
+      // It's a Phone Number - Use Firebase Phone Auth
+      this.setupRecaptcha();
+      try {
+        // Format number if needed, assuming input contains full code like +923001234567
+        const phoneNumber = input.startsWith('+') ? input : '+' + input; 
+        const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
+        
+        // Save confirmation result to verify later
+        window.confirmationResult = confirmationResult;
+        
+        document.getElementById('forgotVerifyTarget').innerText = phoneNumber;
+        document.getElementById('forgotVerifyEmail').innerText = phoneNumber;
+        this.showForgotVerify(null);
+        
+      } catch (error) {
+        console.error("Firebase SMS Error:", error);
+        window.ShowAlert("Failed to send SMS. Please check the phone number format (e.g. +92...).");
+        // Reset recaptcha if failed
+        if (window.recaptchaVerifier) {
+          window.recaptchaVerifier.render().then(function(widgetId) {
+            grecaptcha.reset(widgetId);
+          });
+        }
+      }
+    }
+  },
+
+  handleOtpInput(el, idx) {
+    if (el.value.length === 1) {
+      const next = el.nextElementSibling;
+      if (next && next.classList.contains('otp-box')) {
+        next.focus();
+      }
+    }
+  },
+
+  async handleForgotVerify(e) {
+    e.preventDefault();
+    const boxes = document.querySelectorAll('.otp-box');
+    let otp = '';
+    boxes.forEach(b => otp += b.value);
+    
+    if (otp.length < 6) {
+      window.ShowAlert('Please enter the full 6-digit verification code.');
+      return;
+    }
+
+    const isEmail = this.forgotContext.account.includes('@');
+
+    if (isEmail) {
+      // Verify via Vercel Backend (MongoDB)
+      try {
+        const res = await fetch('/api/auth/forgot-password-verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ account: this.forgotContext.account, otp })
+        });
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+          this.forgotContext.token = data.token;
+          this.showForgotReset(null);
+        } else {
+          window.ShowAlert(data.error || "Invalid verification code!");
+        }
+      } catch(err) {
+        window.ShowAlert("Network error occurred.");
+      }
+    } else {
+      // Verify via Firebase (Phone)
+      if (!window.confirmationResult) {
+        window.ShowAlert("Session expired. Please request a new OTP.");
+        return;
+      }
+      
+      try {
+        const result = await window.confirmationResult.confirm(otp);
+        // User signed in successfully via Firebase!
+        const user = result.user;
+        const idToken = await user.getIdToken();
+        
+        if (this.forgotContext.isSignupLogin) {
+          // This was a WhatsApp Signup/Login flow
+          const res = await fetch('/api/auth/whatsapp-verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: this.forgotContext.account, token: idToken, isFirebase: true })
+          });
+          const data = await res.json();
+          
+          if (res.ok && data.success) {
+            this.currentUser = data.user;
+            localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+            window.ShowAlert('Verification Successful! Welcome ' + (this.currentUser.name || 'User'));
+            this.closeModal();
+            this.checkAuth();
+          } else {
+            window.ShowAlert(data.error || 'Verification failed');
+          }
+        } else {
+          // This was a Forgot Password flow
+          // Pass the firebase idToken to our reset endpoint as proof
+          this.forgotContext.token = idToken;
+          this.forgotContext.isFirebase = true;
+          this.showForgotReset(null);
+        }
+        
+      } catch (error) {
+        console.error(error);
+        window.ShowAlert("Invalid verification code!");
+      }
+    }
+  },
+
+  async handleForgotReset(e) {
+    e.preventDefault();
+    const newPassword = document.getElementById('forgotNewPassword').value;
+
+    try {
+      const res = await fetch('/api/auth/forgot-password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: this.forgotContext.token, password: newPassword })
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        this.currentUser = data.user;
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        this.showForgotSuccess();
+      } else {
+        window.ShowAlert(data.error || "Failed to reset password.");
+      }
+    } catch(err) {
+      window.ShowAlert("Network error occurred.");
+    }
+  },
+
+  finishForgotSuccess() {
+    this.closeModal();
+    this.checkAuth();
+  },
+
   async login(e) {
     e.preventDefault();
     const email = document.getElementById('authEmail').value;
     const pwd = document.getElementById('authPassword').value;
     const remember = document.getElementById('authRemember').checked;
     
+    if (!email || !pwd) return;
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -411,79 +764,83 @@ const Auth = {
       });
       const data = await res.json();
       
-      if (res.ok) {
+      if (res.ok && data.success) {
         this.currentUser = data.user;
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        
         if (remember) {
           localStorage.setItem('rememberedEmail', email);
         } else {
           localStorage.removeItem('rememberedEmail');
         }
+
         window.ShowAlert('Login Successful! Welcome ' + this.currentUser.name);
         this.closeModal();
         this.checkAuth();
       } else {
-        window.ShowAlert(data.error || 'Login failed');
+        window.ShowAlert(data.error || 'Invalid email or password');
       }
-    } catch (err) {
-      window.ShowAlert('Network error connecting to backend.');
+    } catch(err) {
+      window.ShowAlert("Network error occurred during login.");
     }
   },
 
-  async register(e) {
+  async simulateSignup(e) {
     e.preventDefault();
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
-    const password = document.getElementById('signupPassword').value;
-    const phone = document.getElementById('signupPhone').value;
+    const phoneInput = document.getElementById('signupPhone').value;
+    await this.processWhatsapp(phoneInput);
+  },
 
+  async sendCode(e) {
+    e.preventDefault();
+    const phoneInput = document.getElementById('authPhone').value;
+    await this.processWhatsapp(phoneInput);
+  },
+
+  async processWhatsapp(phone) {
+    if (!phone || phone.trim().length < 5) {
+      window.ShowAlert("Please enter a valid phone number.");
+      return;
+    }
+    
+    this.setupRecaptcha();
+    
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, phone })
-      });
-      const data = await res.json();
+      const phoneNumber = phone.startsWith('+') ? phone : '+' + phone;
+      const confirmationResult = await firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier);
       
-      if (res.ok) {
-        window.ShowAlert('Registration successful! Please log in.');
-        this.showLogin(null);
-      } else {
-        window.ShowAlert(data.error || 'Registration failed');
+      // We will re-use the forgot-verify screen for entering the OTP for signup/login as well
+      // This creates a unified experience.
+      window.confirmationResult = confirmationResult;
+      
+      this.forgotContext = { account: phoneNumber, isSignupLogin: true };
+      
+      document.getElementById('forgotVerifyTarget').innerText = phoneNumber;
+      document.getElementById('forgotVerifyEmail').innerText = phoneNumber;
+      this.showForgotVerify(null);
+      
+    } catch (error) {
+      console.error("Firebase SMS Error:", error);
+      window.ShowAlert("Failed to send SMS. Please check the phone number format (e.g. +92...).");
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.render().then(function(widgetId) {
+          grecaptcha.reset(widgetId);
+        });
       }
-    } catch (err) {
-      window.ShowAlert('Network error connecting to backend.');
     }
   },
 
-  sendCode(e) {
-    e.preventDefault();
-    window.ShowAlert('WhatsApp OTP is not configured in backend yet.');
-  },
-
-  simulateSocial(provider) {
-    window.ShowAlert(provider + ' OAuth coming soon.');
-  },
-
-  async logout() {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } catch (e) {}
+  logout() {
     this.currentUser = null;
+    localStorage.removeItem('currentUser');
     window.ShowAlert('You have successfully logged out.');
     this.checkAuth();
   },
 
-  async checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me');
-      const data = await res.json();
-      if (data.authenticated) {
-        this.currentUser = data.user;
-      } else {
-        this.currentUser = null;
-      }
-    } catch (err) {
-      this.currentUser = null;
+  checkAuth() {
+    const saved = localStorage.getItem('currentUser');
+    if (saved) {
+      this.currentUser = JSON.parse(saved);
     }
 
     const loginBtns = document.querySelectorAll('.nav-login-btn');

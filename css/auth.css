@@ -103,7 +103,7 @@
   overflow: hidden;
   display: grid;
   grid-template-columns: 1fr;
-  align-items: start;
+  align-items: stretch;
 }
 
 .auth-view {
@@ -114,6 +114,8 @@
   transition: transform 0.6s ease-in-out, visibility 0s 0.6s;
   pointer-events: none;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .auth-view.slide-top-start {
@@ -255,7 +257,7 @@
 .phone-input-wrapper {
   display: flex;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 28px;
 }
 .custom-country-select {
   position: relative;
@@ -396,4 +398,73 @@
 
 .studio-dropdown-item:hover svg {
   stroke: #f57224;
+}
+
+/* ============================================================
+   FORGOT PASSWORD FLOW STYLES
+=========================================================== */
+.otp-container {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-top: 16px;
+}
+
+.otp-box {
+  width: 45px;
+  height: 45px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.otp-box:focus {
+  border-color: #f57224;
+}
+
+.password-validation-list {
+  margin-top: 16px;
+  padding-left: 20px;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.6;
+  list-style-type: disc;
+}
+
+.password-validation-list li {
+  margin-bottom: 4px;
+}
+
+.btn-forgot-action {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-forgot-action.outline {
+  background: transparent;
+  border: 1px solid #f57224;
+  color: #f57224;
+}
+
+.btn-forgot-action.outline:hover {
+  background: #fdf2ec;
+}
+
+.btn-forgot-action.solid {
+  background: #f57224;
+  border: 1px solid #f57224;
+  color: white;
+}
+
+.btn-forgot-action.solid:hover {
+  background: #e5631c;
 }
