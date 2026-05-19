@@ -328,8 +328,11 @@ const Auth = {
                     <input type="text" maxlength="1" class="otp-box" style="flex: 1; max-width: 45px;" required oninput="Auth.handleOtpInput(this, 6)">
                   </div>
                   
-                  <div style="margin-top: 16px; font-size: 14px; color: #999;">
-                    Resend OTP in <span style="color: #1a9cb7; font-weight: 500;">56</span> s
+                  <div id="otpTimerWrapper" style="margin-top: 16px; font-size: 14px; color: #999;">
+                    Resend OTP in <span id="otpTimerCount" style="color: #1a9cb7; font-weight: 500;">60</span> s
+                  </div>
+                  <div id="otpResendWrapper" style="margin-top: 16px; display: none;">
+                    <a href="#" class="auth-link" style="font-size: 14px;" onclick="Auth.handleForgotRequest(event)">Click here to resend OTP</a>
                   </div>
                   
                   <div style="display: flex; gap: 12px; margin-top: auto; padding-bottom: 16px; width: 100%;">
@@ -529,9 +532,31 @@ const Auth = {
   showForgotVerify(e) {
     if (e) e.preventDefault();
     this.hideAllViews();
-    setTimeout(() => {
-      document.getElementById('view-forgot-verify').classList.add('active');
-    }, 600);
+    document.getElementById('view-forgot-verify').classList.add('active');
+    this.startOtpTimer();
+  },
+
+  startOtpTimer() {
+    if (this.otpInterval) clearInterval(this.otpInterval);
+    let timeLeft = 60;
+    const timerCount = document.getElementById('otpTimerCount');
+    const timerWrapper = document.getElementById('otpTimerWrapper');
+    const resendWrapper = document.getElementById('otpResendWrapper');
+    
+    timerWrapper.style.display = 'block';
+    resendWrapper.style.display = 'none';
+    timerCount.innerText = timeLeft;
+
+    this.otpInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        clearInterval(this.otpInterval);
+        timerWrapper.style.display = 'none';
+        resendWrapper.style.display = 'block';
+      } else {
+        timerCount.innerText = timeLeft;
+      }
+    }, 1000);
   },
 
   showForgotReset(e) {
