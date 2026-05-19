@@ -682,13 +682,37 @@ const Auth = {
     }
   },
 
+  setLoading(btn, isLoading) {
+    if (isLoading) {
+      document.body.style.cursor = 'wait';
+      if (btn) {
+        btn.dataset.originalText = btn.innerHTML;
+        btn.innerHTML = 'Wait...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+      }
+    } else {
+      document.body.style.cursor = 'default';
+      if (btn) {
+        btn.innerHTML = btn.dataset.originalText || 'Confirm';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+    }
+  },
+
   async handleForgotRequest(e) {
     e.preventDefault();
     const input = document.getElementById('forgotInput').value;
     if (!input) return;
 
+    const btn = e.target.querySelector('button[type="submit"]');
+    this.setLoading(btn, true);
+
     this.forgotContext = { account: input };
     const isEmail = input.includes('@');
+
+    try {
 
     if (isEmail) {
       try {
@@ -734,6 +758,8 @@ const Auth = {
           });
         }
       }
+    } finally {
+      this.setLoading(btn, false);
     }
   },
 
@@ -757,9 +783,13 @@ const Auth = {
       return;
     }
 
+    const btn = e.target.querySelector('button[type="submit"]');
+    this.setLoading(btn, true);
+
     const isEmail = this.forgotContext.account.includes('@');
 
-    if (isEmail) {
+    try {
+      if (isEmail) {
       // Verify via Vercel Backend (MongoDB)
       try {
         const res = await fetch('/api/auth-handler?action=forgot-password-verify', {
@@ -821,12 +851,17 @@ const Auth = {
         console.error(error);
         window.ShowAlert("Invalid verification code!");
       }
+    } finally {
+      this.setLoading(btn, false);
     }
   },
 
   async handleForgotReset(e) {
     e.preventDefault();
     const newPassword = document.getElementById('forgotNewPassword').value;
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    this.setLoading(btn, true);
 
     try {
       const res = await fetch('/api/auth-handler?action=forgot-password-reset', {
@@ -845,6 +880,8 @@ const Auth = {
       }
     } catch(err) {
       window.ShowAlert("Network error occurred.");
+    } finally {
+      this.setLoading(btn, false);
     }
   },
 
@@ -860,6 +897,9 @@ const Auth = {
     const remember = document.getElementById('authRemember').checked;
     
     if (!email || !pwd) return;
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    this.setLoading(btn, true);
 
     try {
       const res = await fetch('/api/auth-handler?action=login', {
@@ -894,6 +934,8 @@ const Auth = {
       }
     } catch(err) {
       window.ShowAlert("Network error occurred during login: " + err.message);
+    } finally {
+      this.setLoading(btn, false);
     }
   },
 
