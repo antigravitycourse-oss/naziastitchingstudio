@@ -113,7 +113,14 @@ const Auth = {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('login') === 'success') {
       fetch('/api/auth-handler?action=me')
-        .then(res => res.json())
+        .then(async res => {
+          const text = await res.text();
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            throw new Error(`API Error (${res.status}): ` + text.substring(0, 150));
+          }
+        })
         .then(data => {
           if (data.authenticated && data.user) {
             this.currentUser = data.user;
@@ -787,7 +794,13 @@ const Auth = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: pwd })
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error(`API Error (${res.status}): ` + text.substring(0, 150));
+      }
       
       if (res.ok && data.success) {
         this.currentUser = data.user;
