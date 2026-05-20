@@ -758,7 +758,7 @@ const Auth = {
           });
         }
       }
-    } finally {
+    } } finally {
       this.setLoading(btn, false);
     }
   },
@@ -851,7 +851,7 @@ const Auth = {
         console.error(error);
         window.ShowAlert("Invalid verification code!");
       }
-    } finally {
+    } } finally {
       this.setLoading(btn, false);
     }
   },
